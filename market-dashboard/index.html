@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>환율 & ETF 대시보드</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { box-sizing: border-box; }
 
@@ -16,480 +15,276 @@
     }
 
     .wrap {
-      max-width: 1180px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 22px;
     }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-end;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
+    header { margin-bottom: 18px; }
 
     h1 {
-      margin: 0 0 6px;
-      font-size: 28px;
+      margin: 0 0 8px;
+      font-size: 30px;
+      letter-spacing: -0.8px;
     }
 
     .desc {
-      color: #a8adb7;
       margin: 0;
-      line-height: 1.5;
+      color: #a8adb7;
+      line-height: 1.55;
+      font-size: 14px;
     }
 
-    .controls {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    button, select {
-      border: 1px solid #303545;
-      background: #1b2030;
-      color: #f2f2f2;
-      padding: 9px 12px;
-      border-radius: 10px;
+    .home {
+      display: inline-block;
+      margin-top: 16px;
+      color: #cbd5e1;
+      text-decoration: none;
       font-weight: 700;
-      cursor: pointer;
+      font-size: 14px;
     }
 
-    button:hover {
-      background: #252b3d;
-    }
+    .home:hover { text-decoration: underline; }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
     }
 
     .card {
       background: #171b26;
       border: 1px solid #2a3040;
       border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.26);
+      min-height: 430px;
     }
 
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 14px;
-      color: #a8adb7;
-      font-weight: 700;
-    }
-
-    .value {
-      font-size: 25px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      margin-bottom: 4px;
-    }
-
-    .sub {
-      color: #8e95a3;
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .panel {
-      background: #171b26;
-      border: 1px solid #2a3040;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-    }
-
-    .panelTitle {
+    .cardHeader {
+      padding: 14px 16px 8px;
+      border-bottom: 1px solid #252b3a;
       display: flex;
       justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 10px;
     }
 
-    .panelTitle h2 {
+    .cardHeader h2 {
       margin: 0;
       font-size: 18px;
     }
 
-    .status {
-      color: #a8adb7;
-      font-size: 13px;
+    .cardHeader span {
+      color: #8e95a3;
+      font-size: 12px;
+      white-space: nowrap;
     }
 
-    .error {
-      color: #ff8d8d;
-      white-space: pre-wrap;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-top: 8px;
+    .widgetBox { height: 370px; }
+
+    .wide {
+      grid-column: 1 / -1;
+      min-height: 500px;
     }
+
+    .wide .widgetBox { height: 440px; }
 
     .note {
+      margin-top: 14px;
       color: #9ca3af;
       font-size: 13px;
       line-height: 1.55;
-      margin-top: 10px;
+      background: #171b26;
+      border: 1px solid #2a3040;
+      border-radius: 14px;
+      padding: 14px 16px;
     }
 
-    canvas {
+    .tradingview-widget-container,
+    .tradingview-widget-container__widget {
+      height: 100%;
       width: 100%;
-      max-height: 470px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    th, td {
-      border-bottom: 1px solid #2a3040;
-      padding: 10px 8px;
-      text-align: right;
-    }
-
-    th:first-child, td:first-child {
-      text-align: left;
-    }
-
-    th {
-      color: #a8adb7;
-      font-size: 12px;
-    }
-
-    .up { color: #ff7b7b; }
-    .down { color: #7da7ff; }
-
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: repeat(2, 1fr); }
-      .wrap { padding: 16px; }
+    @media (max-width: 880px) {
+      .grid { grid-template-columns: 1fr; }
+      .wide { grid-column: auto; }
+      .card { min-height: 410px; }
+      .widgetBox { height: 350px; }
+      .wide .widgetBox { height: 390px; }
     }
 
     @media (max-width: 520px) {
-      .grid { grid-template-columns: 1fr; }
-      .value { font-size: 22px; }
+      .wrap { padding: 14px; }
+      h1 { font-size: 25px; }
+
+      .cardHeader { display: block; }
+      .cardHeader span {
+        display: block;
+        margin-top: 4px;
+      }
+
+      .widgetBox,
+      .wide .widgetBox { height: 360px; }
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
-      <div>
-        <h1>환율 & ETF 대시보드</h1>
-        <p class="desc">USD/KRW 환율과 VIG, SCHD, QQQM 일봉 흐름을 한 화면에서 확인합니다.</p>
-      </div>
-
-      <div class="controls">
-        <select id="range">
-          <option value="30">1개월</option>
-          <option value="90">3개월</option>
-          <option value="180">6개월</option>
-          <option value="365" selected>1년</option>
-          <option value="1095">3년</option>
-          <option value="1825">5년</option>
-        </select>
-        <button id="reload">새로고침</button>
-      </div>
+      <h1>환율 & ETF 대시보드</h1>
+      <p class="desc">
+        USD/KRW 환율과 VIG, SCHD, QQQM 차트를 한 화면에서 확인합니다.
+        API 직접 호출이 아니라 TradingView 위젯을 사용해서 GitHub Pages에서도 CORS 문제 없이 동작합니다.
+      </p>
+      <a class="home" href="../">← 도구 모음으로 돌아가기</a>
     </header>
 
-    <section class="grid">
-      <div class="card">
-        <h2>USD/KRW</h2>
-        <div class="value" id="usdKrw">-</div>
-        <div class="sub" id="fxDate">환율 조회 대기</div>
-      </div>
+    <main class="grid">
+      <section class="card wide">
+        <div class="cardHeader">
+          <h2>VIG · SCHD · QQQM 비교</h2>
+          <span>TradingView Symbol Overview</span>
+        </div>
+        <div class="widgetBox">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+            {
+              "symbols": [
+                ["VIG", "AMEX:VIG|1D"],
+                ["SCHD", "AMEX:SCHD|1D"],
+                ["QQQM", "NASDAQ:QQQM|1D"]
+              ],
+              "chartOnly": false,
+              "width": "100%",
+              "height": "100%",
+              "locale": "kr",
+              "colorTheme": "dark",
+              "autosize": true,
+              "showVolume": false,
+              "showMA": false,
+              "hideDateRanges": false,
+              "hideMarketStatus": false,
+              "hideSymbolLogo": false,
+              "scalePosition": "right",
+              "scaleMode": "Normal",
+              "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+              "fontSize": "10",
+              "noTimeScale": false,
+              "valuesTracking": "1",
+              "changeMode": "price-and-percent",
+              "chartType": "area",
+              "maLineColor": "#2962FF",
+              "maLineWidth": 1,
+              "maLength": 9,
+              "lineWidth": 2,
+              "lineType": 0,
+              "dateRanges": [
+                "1d|1",
+                "1m|30",
+                "3m|60",
+                "12m|1D",
+                "60m|1W",
+                "all|1M"
+              ]
+            }
+            </script>
+          </div>
+        </div>
+      </section>
 
-      <div class="card">
-        <h2>VIG</h2>
-        <div class="value" id="vigPrice">-</div>
-        <div class="sub" id="vigSub">조회 대기</div>
-      </div>
+      <section class="card">
+        <div class="cardHeader">
+          <h2>USD/KRW 환율</h2>
+          <span>달러/원</span>
+        </div>
+        <div class="widgetBox">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+            {
+              "symbol": "FX_IDC:USDKRW",
+              "width": "100%",
+              "locale": "kr",
+              "colorTheme": "dark",
+              "isTransparent": true
+            }
+            </script>
+          </div>
+        </div>
+      </section>
 
-      <div class="card">
-        <h2>SCHD</h2>
-        <div class="value" id="schdPrice">-</div>
-        <div class="sub" id="schdSub">조회 대기</div>
-      </div>
+      <section class="card">
+        <div class="cardHeader">
+          <h2>VIG</h2>
+          <span>Vanguard Dividend Appreciation ETF</span>
+        </div>
+        <div class="widgetBox">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+            {
+              "symbol": "AMEX:VIG",
+              "width": "100%",
+              "locale": "kr",
+              "colorTheme": "dark",
+              "isTransparent": true
+            }
+            </script>
+          </div>
+        </div>
+      </section>
 
-      <div class="card">
-        <h2>QQQM</h2>
-        <div class="value" id="qqqmPrice">-</div>
-        <div class="sub" id="qqqmSub">조회 대기</div>
-      </div>
-    </section>
+      <section class="card">
+        <div class="cardHeader">
+          <h2>SCHD</h2>
+          <span>Schwab U.S. Dividend Equity ETF</span>
+        </div>
+        <div class="widgetBox">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+            {
+              "symbol": "AMEX:SCHD",
+              "width": "100%",
+              "locale": "kr",
+              "colorTheme": "dark",
+              "isTransparent": true
+            }
+            </script>
+          </div>
+        </div>
+      </section>
 
-    <section class="panel">
-      <div class="panelTitle">
-        <h2>ETF 비교 차트</h2>
-        <div class="status" id="chartStatus">데이터 로딩 전</div>
-      </div>
-      <canvas id="etfChart"></canvas>
-      <div class="note">
-        기준일 첫 종가를 100으로 환산한 비교 차트입니다. 실시간 매매용이 아니라 개인 확인용 일봉 데이터로 봐야 합니다.
-      </div>
-      <div class="error" id="errorBox"></div>
-    </section>
+      <section class="card">
+        <div class="cardHeader">
+          <h2>QQQM</h2>
+          <span>Invesco NASDAQ 100 ETF</span>
+        </div>
+        <div class="widgetBox">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+            {
+              "symbol": "NASDAQ:QQQM",
+              "width": "100%",
+              "locale": "kr",
+              "colorTheme": "dark",
+              "isTransparent": true
+            }
+            </script>
+          </div>
+        </div>
+      </section>
+    </main>
 
-    <section class="panel">
-      <div class="panelTitle">
-        <h2>최근 종가 요약</h2>
-        <div class="status" id="tableStatus">-</div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>종목</th>
-            <th>최근일</th>
-            <th>종가</th>
-            <th>전일 대비</th>
-            <th>기간 수익률</th>
-          </tr>
-        </thead>
-        <tbody id="summaryBody"></tbody>
-      </table>
-    </section>
+    <div class="note">
+      이 페이지는 TradingView 위젯을 불러와서 표시합니다. 브라우저 광고 차단기나 회사망 보안 정책이 외부 스크립트를 막으면 차트가 안 뜰 수 있습니다.
+      매매 판단용 실시간 시세가 아니라 개인 확인용 화면으로 보는 게 좋습니다.
+    </div>
   </div>
-
-  <script>
-    const symbols = [
-      { key: 'vig', label: 'VIG', stooq: 'vig.us' },
-      { key: 'schd', label: 'SCHD', stooq: 'schd.us' },
-      { key: 'qqqm', label: 'QQQM', stooq: 'qqqm.us' }
-    ];
-
-    let chart = null;
-
-    const el = id => document.getElementById(id);
-
-    function formatNumber(n, digits = 2) {
-      if (!Number.isFinite(n)) return '-';
-      return n.toLocaleString('ko-KR', {
-        minimumFractionDigits: digits,
-        maximumFractionDigits: digits
-      });
-    }
-
-    function yyyymmdd(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      return `${y}${m}${d}`;
-    }
-
-    function parseCsv(csv) {
-      const lines = csv.trim().split(/\r?\n/);
-      if (lines.length <= 1) return [];
-
-      const header = lines[0].split(',').map(v => v.trim().toLowerCase());
-      const idxDate = header.indexOf('date');
-      const idxClose = header.indexOf('close');
-
-      return lines.slice(1).map(line => {
-        const cols = line.split(',');
-        return {
-          date: cols[idxDate],
-          close: Number(cols[idxClose])
-        };
-      }).filter(row => row.date && Number.isFinite(row.close));
-    }
-
-    async function fetchFx() {
-      // exchangerate.host 계열은 키 이슈가 있을 수 있어, 키 없는 frankfurter를 우선 사용.
-      // Frankfurter는 EUR 기준 데이터를 주로 쓰므로 USD/KRW는 KRW/USD 값을 직접 요청한다.
-      const url = 'https://api.frankfurter.app/latest?from=USD&to=KRW';
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('환율 API 응답 실패: ' + res.status);
-      const json = await res.json();
-
-      const rate = json?.rates?.KRW;
-      if (!rate) throw new Error('USD/KRW 환율 값을 찾지 못했습니다.');
-
-      el('usdKrw').textContent = formatNumber(rate, 2);
-      el('fxDate').textContent = `기준일 ${json.date || '-'}`;
-    }
-
-    async function fetchStooq(symbol, days) {
-      const end = new Date();
-      const start = new Date();
-      start.setDate(start.getDate() - Number(days) - 14);
-
-      const url =
-        `https://stooq.com/q/d/l/?s=${encodeURIComponent(symbol)}&d1=${yyyymmdd(start)}&d2=${yyyymmdd(end)}&i=d`;
-
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`${symbol} 데이터 응답 실패: ${res.status}`);
-
-      const text = await res.text();
-      const rows = parseCsv(text);
-
-      if (rows.length === 0) {
-        throw new Error(`${symbol} 데이터를 가져오지 못했습니다. API 또는 CORS가 막혔을 수 있습니다.`);
-      }
-
-      return rows.slice(-Number(days));
-    }
-
-    function calcSummary(rows) {
-      const first = rows[0];
-      const last = rows[rows.length - 1];
-      const prev = rows[rows.length - 2] || first;
-
-      const dayChange = ((last.close / prev.close) - 1) * 100;
-      const periodReturn = ((last.close / first.close) - 1) * 100;
-
-      return { first, last, prev, dayChange, periodReturn };
-    }
-
-    function setCard(symbol, summary) {
-      el(`${symbol.key}Price`).textContent = `$${formatNumber(summary.last.close, 2)}`;
-
-      const dayText = `${summary.dayChange >= 0 ? '+' : ''}${formatNumber(summary.dayChange, 2)}%`;
-      const periodText = `${summary.periodReturn >= 0 ? '+' : ''}${formatNumber(summary.periodReturn, 2)}%`;
-
-      el(`${symbol.key}Sub`).innerHTML =
-        `${summary.last.date} / 전일 <span class="${summary.dayChange >= 0 ? 'up' : 'down'}">${dayText}</span> / 기간 <span class="${summary.periodReturn >= 0 ? 'up' : 'down'}">${periodText}</span>`;
-    }
-
-    function drawTable(dataMap) {
-      const tbody = el('summaryBody');
-      tbody.innerHTML = '';
-
-      symbols.forEach(symbol => {
-        const rows = dataMap[symbol.label];
-        const s = calcSummary(rows);
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${symbol.label}</td>
-          <td>${s.last.date}</td>
-          <td>$${formatNumber(s.last.close, 2)}</td>
-          <td class="${s.dayChange >= 0 ? 'up' : 'down'}">${s.dayChange >= 0 ? '+' : ''}${formatNumber(s.dayChange, 2)}%</td>
-          <td class="${s.periodReturn >= 0 ? 'up' : 'down'}">${s.periodReturn >= 0 ? '+' : ''}${formatNumber(s.periodReturn, 2)}%</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      el('tableStatus').textContent = `최근 ${el('range').selectedOptions[0].textContent} 기준`;
-    }
-
-    function drawChart(dataMap) {
-      const labels = dataMap['VIG'].map(row => row.date);
-
-      const datasets = symbols.map(symbol => {
-        const rows = dataMap[symbol.label];
-        const base = rows[0].close;
-
-        return {
-          label: symbol.label,
-          data: rows.map(row => (row.close / base) * 100),
-          tension: 0.18,
-          borderWidth: 2,
-          pointRadius: 0
-        };
-      });
-
-      if (chart) chart.destroy();
-
-      chart = new Chart(el('etfChart'), {
-        type: 'line',
-        data: { labels, datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          interaction: {
-            mode: 'index',
-            intersect: false
-          },
-          plugins: {
-            legend: {
-              labels: { color: '#e8e8e8' }
-            },
-            tooltip: {
-              callbacks: {
-                label: context => `${context.dataset.label}: ${formatNumber(context.parsed.y, 2)}`
-              }
-            }
-          },
-          scales: {
-            x: {
-              ticks: {
-                color: '#9ca3af',
-                maxTicksLimit: 10
-              },
-              grid: { color: '#242a38' }
-            },
-            y: {
-              ticks: {
-                color: '#9ca3af',
-                callback: value => formatNumber(value, 0)
-              },
-              grid: { color: '#242a38' },
-              title: {
-                display: true,
-                text: '기준일 = 100',
-                color: '#9ca3af'
-              }
-            }
-          }
-        }
-      });
-    }
-
-    async function loadAll() {
-      el('errorBox').textContent = '';
-      el('chartStatus').textContent = '데이터 로딩 중...';
-
-      const days = el('range').value;
-      const errors = [];
-
-      try {
-        await fetchFx();
-      } catch (err) {
-        errors.push(err.message);
-        el('usdKrw').textContent = '-';
-        el('fxDate').textContent = '환율 조회 실패';
-      }
-
-      const dataMap = {};
-
-      await Promise.all(symbols.map(async symbol => {
-        try {
-          const rows = await fetchStooq(symbol.stooq, days);
-          dataMap[symbol.label] = rows;
-          setCard(symbol, calcSummary(rows));
-        } catch (err) {
-          errors.push(err.message);
-          el(`${symbol.key}Price`).textContent = '-';
-          el(`${symbol.key}Sub`).textContent = '조회 실패';
-        }
-      }));
-
-      if (Object.keys(dataMap).length === symbols.length) {
-        drawChart(dataMap);
-        drawTable(dataMap);
-        el('chartStatus').textContent = `최종 갱신: ${new Date().toLocaleString('ko-KR')}`;
-      } else {
-        el('chartStatus').textContent = '일부 데이터 조회 실패';
-      }
-
-      if (errors.length > 0) {
-        el('errorBox').textContent = errors.join('\n');
-      }
-    }
-
-    el('reload').addEventListener('click', loadAll);
-    el('range').addEventListener('change', loadAll);
-
-    loadAll();
-  </script>
 </body>
 </html>
