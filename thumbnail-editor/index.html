@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유튜브 섬네일 자동 생성기 (오프라인)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: sans-serif; }
+        .font-black-han { font-family: 'Black Han Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white p-6 min-h-screen">
+    <div class="max-w-6xl mx-auto space-y-6">
+        
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-bold font-black-han tracking-wide">유튜브 섬네일 자동 생성기</h1>
+            <p class="text-gray-400">바탕화면에 저장해두고 언제든 실행하세요.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-800 p-6 rounded-xl">
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold border-b border-gray-600 pb-2 text-yellow-400">왼쪽 설정</h2>
+                <div>
+                    <label class="block text-sm font-medium mb-1">이미지 업로드</label>
+                    <input type="file" id="file1" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 cursor-pointer">
+                </div>
+                <div class="pt-2 border-t border-gray-700">
+                    <label class="block text-sm font-medium mb-2 text-gray-300">이미지 위치 및 크기</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="x1" min="-500" max="500" value="0" class="flex-1 accent-yellow-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="y1" min="-500" max="500" value="0" class="flex-1 accent-yellow-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="scale1" min="0.5" max="3" step="0.05" value="1.0" class="flex-1 accent-yellow-400"></div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-gray-700 space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">문구</label>
+                        <input type="text" id="text1" value="카운터스로 속터지고" class="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600 focus:outline-none focus:border-yellow-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">문구 위치, 크기, 색상</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="textX1" min="0" max="1280" value="350" class="flex-1 accent-yellow-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="textY1" min="0" max="720" value="180" class="flex-1 accent-yellow-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="textSize1" min="30" max="200" value="85" class="flex-1 accent-yellow-400"></div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-10">색상</span>
+                                <input type="color" id="textColor1" value="#FFEB3B" class="w-full h-8 bg-transparent border-0 cursor-pointer rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold border-b border-gray-600 pb-2 text-cyan-400">오른쪽 설정</h2>
+                <div>
+                    <label class="block text-sm font-medium mb-1">이미지 업로드</label>
+                    <input type="file" id="file2" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100 cursor-pointer">
+                </div>
+                <div class="pt-2 border-t border-gray-700">
+                    <label class="block text-sm font-medium mb-2 text-gray-300">이미지 위치 및 크기</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="x2" min="-500" max="500" value="100" class="flex-1 accent-cyan-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="y2" min="-500" max="500" value="50" class="flex-1 accent-cyan-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="scale2" min="0.5" max="3" step="0.05" value="1.3" class="flex-1 accent-cyan-400"></div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-gray-700 space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">문구</label>
+                        <input type="text" id="text2" value="도로롱으로 치유하기" class="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600 focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">문구 위치, 크기, 색상</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="textX2" min="0" max="1280" value="900" class="flex-1 accent-cyan-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="textY2" min="0" max="720" value="560" class="flex-1 accent-cyan-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="textSize2" min="30" max="200" value="85" class="flex-1 accent-cyan-400"></div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-10">색상</span>
+                                <input type="color" id="textColor2" value="#E0F7FA" class="w-full h-8 bg-transparent border-0 cursor-pointer rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative w-full overflow-hidden rounded-xl shadow-2xl bg-black flex justify-center border border-gray-700">
+            <canvas id="thumbnailCanvas" width="1280" height="720" class="max-w-full h-auto object-contain"></canvas>
+        </div>
+
+        <div class="flex justify-center pb-10">
+            <button id="downloadBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>섬네일 다운로드 (JPG)</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('thumbnailCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 요소 가져오기
+        const file1 = document.getElementById('file1');
+        const file2 = document.getElementById('file2');
+        const text1 = document.getElementById('text1');
+        const text2 = document.getElementById('text2');
+        
+        const x1 = document.getElementById('x1'); const y1 = document.getElementById('y1'); const scale1 = document.getElementById('scale1');
+        const x2 = document.getElementById('x2'); const y2 = document.getElementById('y2'); const scale2 = document.getElementById('scale2');
+
+        const textX1 = document.getElementById('textX1'); const textY1 = document.getElementById('textY1');
+        const textSize1 = document.getElementById('textSize1'); const textColor1 = document.getElementById('textColor1');
+        
+        const textX2 = document.getElementById('textX2'); const textY2 = document.getElementById('textY2');
+        const textSize2 = document.getElementById('textSize2'); const textColor2 = document.getElementById('textColor2');
+        
+        // 상태 변수
+        let img1 = null; let img2 = null;
+        let fontLoaded = false;
+
+        // 폰트 로드 대기
+        document.fonts.ready.then(() => {
+            fontLoaded = true;
+            drawCanvas();
+        });
+
+        // 이벤트 리스너 등록
+        const inputs = [
+            text1, text2, x1, y1, scale1, x2, y2, scale2,
+            textX1, textY1, textSize1, textColor1,
+            textX2, textY2, textSize2, textColor2
+        ];
+        inputs.forEach(input => input.addEventListener('input', drawCanvas));
+
+        file1.addEventListener('change', (e) => handleImageUpload(e, (img) => { img1 = img; drawCanvas(); }));
+        file2.addEventListener('change', (e) => handleImageUpload(e, (img) => { img2 = img; drawCanvas(); }));
+
+        function handleImageUpload(e, callback) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => callback(img);
+            img.src = url;
+        }
+
+        function drawCanvas() {
+            if (!fontLoaded) return;
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, width, height);
+
+            const splitTopX = 850;
+            const splitBottomX = 430;
+
+            // 왼쪽 이미지
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(splitTopX, 0); ctx.lineTo(splitBottomX, height); ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.clip();
+
+            if (img1) {
+                const s = parseFloat(scale1.value);
+                const drawH = height * s;
+                const drawW = img1.width * (height / img1.height) * s;
+                ctx.drawImage(img1, parseFloat(x1.value), parseFloat(y1.value), drawW, drawH);
+            } else {
+                ctx.fillStyle = '#4a0000'; ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#ffffff'; ctx.font = '30px "Black Han Sans", sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('이미지를 업로드하세요', splitTopX / 2, height / 2);
+            }
+            ctx.restore();
+
+            // 오른쪽 이미지
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(splitTopX, 0); ctx.lineTo(width, 0); ctx.lineTo(width, height); ctx.lineTo(splitBottomX, height);
+            ctx.closePath();
+            ctx.clip();
+
+            if (img2) {
+                const s = parseFloat(scale2.value);
+                const drawH = height * s;
+                const drawW = img2.width * (height / img2.height) * s;
+                ctx.drawImage(img2, (width - drawW) + parseFloat(x2.value), parseFloat(y2.value), drawW, drawH);
+            } else {
+                ctx.fillStyle = '#00224a'; ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#ffffff'; ctx.font = '30px "Black Han Sans", sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('이미지를 업로드하세요', width - (width - splitBottomX) / 2, height / 2);
+            }
+            ctx.restore();
+
+            // 분할선
+            ctx.beginPath();
+            ctx.moveTo(splitTopX, 0); ctx.lineTo(splitBottomX, height);
+            ctx.lineWidth = 15; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+
+            // 텍스트 그리기 함수 (크기 파라미터 추가)
+            const drawText = (text, x, y, size, angle, fillColor, strokeColor) => {
+                ctx.save();
+                ctx.translate(x, y); ctx.rotate((angle * Math.PI) / 180);
+                ctx.font = `${size}px "Black Han Sans", sans-serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                
+                ctx.lineWidth = 8; ctx.strokeStyle = strokeColor; ctx.lineJoin = 'round';
+                ctx.strokeText(text, 0, 0);
+                
+                ctx.fillStyle = fillColor; ctx.fillText(text, 0, 0);
+                ctx.restore();
+            };
+
+            // 변경된 설정값 적용
+            if (text1.value) {
+                drawText(
+                    text1.value, 
+                    parseFloat(textX1.value), 
+                    parseFloat(textY1.value), 
+                    parseFloat(textSize1.value), 
+                    -8, 
+                    textColor1.value, 
+                    '#1a1a1a'
+                );
+            }
+            
+            if (text2.value) {
+                drawText(
+                    text2.value, 
+                    parseFloat(textX2.value), 
+                    parseFloat(textY2.value), 
+                    parseFloat(textSize2.value), 
+                    -5, 
+                    textColor2.value, 
+                    '#1a1a1a'
+                );
+            }
+        }
+
+        // 다운로드 로직
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            const link = document.createElement('a');
+            link.download = 'youtube_thumbnail.jpg';
+            link.href = dataUrl;
+            link.click();
+        });
+    </script>
+</body>
+</html>
