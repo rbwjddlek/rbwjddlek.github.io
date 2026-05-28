@@ -2,17 +2,165 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>내 도구 모음</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #111827, #1f2937);
+      color: #f9fafb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+    }
+
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 18px 48px;
+    }
+
+    header {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 34px;
+      letter-spacing: -1px;
+    }
+
+    .desc {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      display: block;
+      min-height: 150px;
+      padding: 22px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: inherit;
+      text-decoration: none;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.22);
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.13);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      font-size: 24px;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 19px;
+      line-height: 1.35;
+    }
+
+    .card p {
+      margin: 0;
+      color: #d1d5db;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        padding: 24px 14px 40px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        min-height: auto;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>내 도구 모음</h1>
-  <p>GitHub Pages 작동 확인</p>
-  
-  <ul>
-    <li><a href="./diagonal-thumbnail/">대각선 프레임 섬네일 생성기</a></li>
-    <li><a href="./thumbnail-editor/">섬네일 편집기</a></li>
-    <li><a href="./market-dashboard/"환율ETF</a></li>
-  </ul>
-  
+  <div class="wrap">
+    <header>
+      <h1>내 도구 모음</h1>
+      <p class="desc">
+        자주 쓰는 개인용 웹 도구를 모아둔 페이지입니다.<br>
+        원하는 도구를 눌러서 바로 실행하세요.
+      </p>
+    </header>
+
+    <main class="grid">
+      <a class="card" href="./diagonal-thumbnail/">
+        <div class="icon">🖼️</div>
+        <h2>대각선 프레임 섬네일</h2>
+        <p>좌우 이미지를 대각선으로 나눠 유튜브 섬네일을 만듭니다.</p>
+      </a>
+
+      <a class="card" href="./thumbnail-editor/">
+        <div class="icon">✏️</div>
+        <h2>섬네일 편집기</h2>
+        <p>이미지에 문구를 넣고 강조 문구를 지정해 PNG로 저장합니다.</p>
+      </a>
+
+      <a class="card" href="./market-dashboard/">
+        <div class="icon">📈</div>
+        <h2>환율 · ETF 대시보드</h2>
+        <p>USD/KRW 환율과 VIG, SCHD, QQQM 차트를 한 번에 봅니다.</p>
+      </a>
+    </main>
+
+    <div class="footer">
+      GitHub Pages 개인 도구 모음
+    </div>
+  </div>
 </body>
 </html>
