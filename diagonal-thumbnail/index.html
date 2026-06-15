@@ -1,468 +1,261 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>유튜브 섬네일 편집기</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: #111;
-      color: #eee;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
-    }
-
-    .wrap {
-      max-width: 1500px;
-      margin: 0 auto;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 18px;
-    }
-
-    h1 {
-      margin: 0 0 6px;
-      font-size: 26px;
-    }
-
-    p {
-      margin: 0 0 16px;
-      color: #aaa;
-    }
-
-    .preview {
-      background: #1d1d1d;
-      border: 1px solid #333;
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    canvas {
-      width: 100%;
-      display: block;
-      border-radius: 10px;
-      background: #222;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    button, label.fileBtn {
-      border: 0;
-      border-radius: 10px;
-      padding: 11px 14px;
-      background: #f5f5f5;
-      color: #111;
-      font-weight: 800;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    button.secondary {
-      background: #444;
-      color: #eee;
-    }
-
-    .panel {
-      background: #1d1d1d;
-      border: 1px solid #333;
-      border-radius: 14px;
-      padding: 16px;
-      height: fit-content;
-    }
-
-    .field {
-      margin-bottom: 14px;
-    }
-
-    .field span {
-      display: flex;
-      justify-content: space-between;
-      color: #ccc;
-      font-size: 13px;
-      margin-bottom: 6px;
-    }
-
-    textarea, select, input[type="text"], input[type="number"] {
-      width: 100%;
-      background: #101010;
-      color: #eee;
-      border: 1px solid #444;
-      border-radius: 10px;
-      padding: 9px;
-      font-size: 14px;
-    }
-
-    textarea {
-      height: 120px;
-      resize: vertical;
-    }
-
-    input[type="range"] {
-      width: 100%;
-    }
-
-    input[type="color"] {
-      width: 100%;
-      height: 42px;
-      background: #101010;
-      border: 1px solid #444;
-      border-radius: 10px;
-      padding: 4px;
-    }
-
-    .grid2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .grid3 {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-    }
-
-    .divider {
-      border-top: 1px solid #333;
-      padding-top: 14px;
-      margin-top: 12px;
-    }
-
-    em {
-      font-style: normal;
-      color: #aaa;
-    }
-
-    @media (max-width: 1000px) {
-      .wrap {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유튜브 섬네일 자동 생성기 (오프라인)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: sans-serif; }
+        .font-black-han { font-family: 'Black Han Sans', sans-serif; }
+    </style>
 </head>
-<body>
-  <div class="wrap">
-    <main>
-      <h1>유튜브 섬네일 편집기</h1>
-      <p>이미지 업로드 → 문구 조정 → 1280×720 PNG 다운로드</p>
-
-      <div class="preview">
-        <canvas id="canvas" width="1280" height="720"></canvas>
-      </div>
-
-      <div class="buttons">
-        <label class="fileBtn">
-          이미지 넣기
-          <input id="file" type="file" accept="image/*" hidden />
-        </label>
-        <button id="download">PNG 다운로드</button>
-        <button id="reset" class="secondary">초기화</button>
-      </div>
-    </main>
-
-    <aside class="panel">
-      <div class="field">
-        <span>문구</span>
-        <textarea id="text">어쨌든
-마이클 잭슨이라는 이름은
-다시 알렸쥬?</textarea>
-      </div>
-
-      <div class="field">
-        <span>강조할 구문 (,로 여러 개 입력)</span>
-        <input
-          id="accentKeywords"
-          type="text"
-          value="마이클 잭슨,다시 알렸쥬"
-          placeholder="예: 마이클 잭슨,충격,레전드"
-        />
-      </div>
-
-      <div class="grid2">
-        <div class="field">
-          <span>폰트</span>
-          <select id="fontFamily">
-            <option>Arial Black</option>
-            <option>Impact</option>
-            <option>Malgun Gothic</option>
-            <option>sans-serif</option>
-            <option>serif</option>
-          </select>
+<body class="bg-gray-900 text-white p-6 min-h-screen">
+    <div class="max-w-6xl mx-auto space-y-6">
+        
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-bold font-black-han tracking-wide">유튜브 섬네일 자동 생성기</h1>
+            <p class="text-gray-400">바탕화면에 저장해두고 언제든 실행하세요.</p>
         </div>
-        <div class="field">
-          <span>정렬</span>
-          <select id="textAlign">
-            <option value="left">왼쪽</option>
-            <option value="center">가운데</option>
-            <option value="right">오른쪽</option>
-          </select>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-800 p-6 rounded-xl">
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold border-b border-gray-600 pb-2 text-yellow-400">왼쪽 설정</h2>
+                <div>
+                    <label class="block text-sm font-medium mb-1">이미지 업로드</label>
+                    <input type="file" id="file1" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 cursor-pointer">
+                </div>
+                <div class="pt-2 border-t border-gray-700">
+                    <label class="block text-sm font-medium mb-2 text-gray-300">이미지 위치 및 크기</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="x1" min="-500" max="500" value="0" class="flex-1 accent-yellow-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="y1" min="-500" max="500" value="0" class="flex-1 accent-yellow-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="scale1" min="0.5" max="3" step="0.05" value="1.0" class="flex-1 accent-yellow-400"></div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-gray-700 space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">문구</label>
+                        <input type="text" id="text1" value="카운터스로 속터지고" class="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600 focus:outline-none focus:border-yellow-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">문구 위치, 크기, 색상</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="textX1" min="0" max="1280" value="350" class="flex-1 accent-yellow-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="textY1" min="0" max="720" value="180" class="flex-1 accent-yellow-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="textSize1" min="30" max="200" value="85" class="flex-1 accent-yellow-400"></div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-10">색상</span>
+                                <input type="color" id="textColor1" value="#FFEB3B" class="w-full h-8 bg-transparent border-0 cursor-pointer rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold border-b border-gray-600 pb-2 text-cyan-400">오른쪽 설정</h2>
+                <div>
+                    <label class="block text-sm font-medium mb-1">이미지 업로드</label>
+                    <input type="file" id="file2" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100 cursor-pointer">
+                </div>
+                <div class="pt-2 border-t border-gray-700">
+                    <label class="block text-sm font-medium mb-2 text-gray-300">이미지 위치 및 크기</label>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="x2" min="-500" max="500" value="100" class="flex-1 accent-cyan-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="y2" min="-500" max="500" value="50" class="flex-1 accent-cyan-400"></div>
+                        <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="scale2" min="0.5" max="3" step="0.05" value="1.3" class="flex-1 accent-cyan-400"></div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-gray-700 space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">문구</label>
+                        <input type="text" id="text2" value="도로롱으로 치유하기" class="w-full bg-gray-700 text-white rounded px-3 py-2 border border-gray-600 focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">문구 위치, 크기, 색상</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center text-xs"><span class="w-10">가로</span><input type="range" id="textX2" min="0" max="1280" value="900" class="flex-1 accent-cyan-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">세로</span><input type="range" id="textY2" min="0" max="720" value="560" class="flex-1 accent-cyan-400"></div>
+                            <div class="flex items-center text-xs"><span class="w-10">크기</span><input type="range" id="textSize2" min="30" max="200" value="85" class="flex-1 accent-cyan-400"></div>
+                            <div class="flex items-center text-xs">
+                                <span class="w-10">색상</span>
+                                <input type="color" id="textColor2" value="#E0F7FA" class="w-full h-8 bg-transparent border-0 cursor-pointer rounded">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <div id="sliders"></div>
-
-      <div class="grid3">
-        <div class="field">
-          <span>글자색</span>
-          <input id="fillColor" type="color" value="#ffffff" />
+        <div class="relative w-full overflow-hidden rounded-xl shadow-2xl bg-black flex justify-center border border-gray-700">
+            <canvas id="thumbnailCanvas" width="1280" height="720" class="max-w-full h-auto object-contain"></canvas>
         </div>
-        <div class="field">
-          <span>강조색</span>
-          <input id="accentColor" type="color" value="#ffd400" />
+
+        <div class="flex justify-center pb-10">
+            <button id="downloadBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full shadow-lg transition-transform transform hover:scale-105 flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>섬네일 다운로드 (JPG)</span>
+            </button>
         </div>
-        <div class="field">
-          <span>외곽선</span>
-          <input id="strokeColor" type="color" value="#111111" />
-        </div>
-      </div>
+    </div>
 
-      <div class="divider" id="effectSliders"></div>
-    </aside>
-  </div>
+    <script>
+        const canvas = document.getElementById('thumbnailCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 요소 가져오기
+        const file1 = document.getElementById('file1');
+        const file2 = document.getElementById('file2');
+        const text1 = document.getElementById('text1');
+        const text2 = document.getElementById('text2');
+        
+        const x1 = document.getElementById('x1'); const y1 = document.getElementById('y1'); const scale1 = document.getElementById('scale1');
+        const x2 = document.getElementById('x2'); const y2 = document.getElementById('y2'); const scale2 = document.getElementById('scale2');
 
-  <script>
-    const CANVAS_W = 1280;
-    const CANVAS_H = 720;
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+        const textX1 = document.getElementById('textX1'); const textY1 = document.getElementById('textY1');
+        const textSize1 = document.getElementById('textSize1'); const textColor1 = document.getElementById('textColor1');
+        
+        const textX2 = document.getElementById('textX2'); const textY2 = document.getElementById('textY2');
+        const textSize2 = document.getElementById('textSize2'); const textColor2 = document.getElementById('textColor2');
+        
+        // 상태 변수
+        let img1 = null; let img2 = null;
+        let fontLoaded = false;
 
-    let img = null;
-
-    const state = {
-      text: document.getElementById('text').value,
-      accentKeywords: document.getElementById('accentKeywords').value,
-      fontFamily: 'Arial Black',
-      textAlign: 'left',
-      fontSize: 78,
-      x: 48,
-      y: 86,
-      lineHeight: 1.18,
-      strokeWidth: 10,
-      shadowBlur: 10,
-      brightness: 1.05,
-      contrast: 1.08,
-      vignette: 0.35,
-      fillColor: '#ffffff',
-      accentColor: '#ffd400',
-      strokeColor: '#111111'
-    };
-
-    const sliderDefs = [
-      ['fontSize', '글자 크기', 24, 140, 1],
-      ['x', 'X 위치', 0, 700, 1],
-      ['y', 'Y 위치', 0, 560, 1],
-      ['lineHeight', '줄 간격', 0.8, 1.8, 0.01],
-      ['strokeWidth', '외곽선 두께', 0, 28, 1],
-      ['shadowBlur', '그림자', 0, 40, 1]
-    ];
-
-    const effectDefs = [
-      ['brightness', '밝기', 0.5, 1.8, 0.01],
-      ['contrast', '대비', 0.5, 1.8, 0.01],
-      ['vignette', '비네팅', 0, 0.8, 0.01]
-    ];
-
-    function makeSlider(parentId, defs) {
-      const parent = document.getElementById(parentId);
-
-      defs.forEach(([key, label, min, max, step]) => {
-        const div = document.createElement('div');
-        div.className = 'field';
-        div.innerHTML = `
-          <span><b>${label}</b><em id="${key}Val">${formatValue(state[key], step)}</em></span>
-          <input id="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${state[key]}" />
-        `;
-        parent.appendChild(div);
-
-        const input = div.querySelector('input');
-        const val = div.querySelector('em');
-
-        input.addEventListener('input', () => {
-          state[key] = Number(input.value);
-          val.textContent = formatValue(state[key], step);
-          draw();
+        // 폰트 로드 대기
+        document.fonts.ready.then(() => {
+            fontLoaded = true;
+            drawCanvas();
         });
-      });
-    }
 
-    function formatValue(value, step) {
-      return step < 1 ? Number(value).toFixed(2) : value;
-    }
+        // 이벤트 리스너 등록
+        const inputs = [
+            text1, text2, x1, y1, scale1, x2, y2, scale2,
+            textX1, textY1, textSize1, textColor1,
+            textX2, textY2, textSize2, textColor2
+        ];
+        inputs.forEach(input => input.addEventListener('input', drawCanvas));
 
-    makeSlider('sliders', sliderDefs);
-    makeSlider('effectSliders', effectDefs);
+        file1.addEventListener('change', (e) => handleImageUpload(e, (img) => { img1 = img; drawCanvas(); }));
+        file2.addEventListener('change', (e) => handleImageUpload(e, (img) => { img2 = img; drawCanvas(); }));
 
-    function bind(id, key) {
-      const el = document.getElementById(id);
-
-      el.addEventListener('input', () => {
-        state[key] = el.value;
-        draw();
-      });
-
-      el.addEventListener('change', () => {
-        state[key] = el.value;
-        draw();
-      });
-    }
-
-    ['text', 'accentKeywords', 'fontFamily', 'textAlign', 'fillColor', 'accentColor', 'strokeColor']
-      .forEach(id => bind(id, id));
-
-    document.getElementById('file').addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const url = URL.createObjectURL(file);
-      const image = new Image();
-
-      image.onload = () => {
-        img = image;
-        URL.revokeObjectURL(url);
-        draw();
-      };
-
-      image.src = url;
-    });
-
-    document.getElementById('download').addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.download = 'youtube-thumbnail.png';
-      a.href = canvas.toDataURL('image/png');
-      a.click();
-    });
-
-    document.getElementById('reset').addEventListener('click', () => {
-      location.reload();
-    });
-
-    function drawCoverImage(image) {
-      const canvasRatio = CANVAS_W / CANVAS_H;
-      const imgRatio = image.width / image.height;
-
-      let sx, sy, sw, sh;
-
-      if (imgRatio > canvasRatio) {
-        sh = image.height;
-        sw = image.height * canvasRatio;
-        sx = (image.width - sw) / 2;
-        sy = 0;
-      } else {
-        sw = image.width;
-        sh = image.width / canvasRatio;
-        sx = 0;
-        sy = (image.height - sh) / 2;
-      }
-
-      ctx.save();
-      ctx.filter = `brightness(${state.brightness}) contrast(${state.contrast})`;
-      ctx.drawImage(image, sx, sy, sw, sh, 0, 0, CANVAS_W, CANVAS_H);
-      ctx.restore();
-    }
-
-    function drawVignette() {
-      const g = ctx.createRadialGradient(
-        CANVAS_W * 0.55, CANVAS_H * 0.45, CANVAS_W * 0.15,
-        CANVAS_W * 0.5, CANVAS_H * 0.5, CANVAS_W * 0.78
-      );
-
-      g.addColorStop(0, 'rgba(0,0,0,0)');
-      g.addColorStop(1, `rgba(0,0,0,${state.vignette})`);
-
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-    }
-
-    function wrapLine(line, maxWidth) {
-      const chars = [...line];
-      const result = [];
-      let current = '';
-
-      for (const ch of chars) {
-        const test = current + ch;
-        if (ctx.measureText(test).width > maxWidth && current) {
-          result.push(current);
-          current = ch;
-        } else {
-          current = test;
+        function handleImageUpload(e, callback) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => callback(img);
+            img.src = url;
         }
-      }
 
-      if (current) result.push(current);
-      return result;
-    }
+        function drawCanvas() {
+            if (!fontLoaded) return;
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, width, height);
 
-    function drawText() {
-      ctx.save();
-      ctx.font = `900 ${state.fontSize}px "${state.fontFamily}", Impact, sans-serif`;
-      ctx.textBaseline = 'top';
-      ctx.textAlign = state.textAlign;
-      ctx.lineJoin = 'round';
-      ctx.shadowColor = 'rgba(0,0,0,0.85)';
-      ctx.shadowBlur = state.shadowBlur;
-      ctx.shadowOffsetX = 4;
-      ctx.shadowOffsetY = 4;
+            const splitTopX = 850;
+            const splitBottomX = 430;
 
-      const maxWidth = CANVAS_W - state.x - 50;
-      const lines = state.text.split('\n').flatMap(line => wrapLine(line, maxWidth));
-      const lh = state.fontSize * state.lineHeight;
+            // 왼쪽 이미지
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(0, 0); ctx.lineTo(splitTopX, 0); ctx.lineTo(splitBottomX, height); ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.clip();
 
-      const accentList = state.accentKeywords
-        .split(',')
-        .map(v => v.trim())
-        .filter(v => v.length > 0);
+            if (img1) {
+                const s = parseFloat(scale1.value);
+                const drawH = height * s;
+                const drawW = img1.width * (height / img1.height) * s;
+                ctx.drawImage(img1, parseFloat(x1.value), parseFloat(y1.value), drawW, drawH);
+            } else {
+                ctx.fillStyle = '#4a0000'; ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#ffffff'; ctx.font = '30px "Black Han Sans", sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('이미지를 업로드하세요', splitTopX / 2, height / 2);
+            }
+            ctx.restore();
 
-      lines.forEach((line, i) => {
-        const tx = state.textAlign === 'center'
-          ? CANVAS_W / 2
-          : state.textAlign === 'right'
-          ? CANVAS_W - state.x
-          : state.x;
+            // 오른쪽 이미지
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(splitTopX, 0); ctx.lineTo(width, 0); ctx.lineTo(width, height); ctx.lineTo(splitBottomX, height);
+            ctx.closePath();
+            ctx.clip();
 
-        const ty = state.y + i * lh;
-        const accent = accentList.some(keyword => line.includes(keyword));
+            if (img2) {
+                const s = parseFloat(scale2.value);
+                const drawH = height * s;
+                const drawW = img2.width * (height / img2.height) * s;
+                ctx.drawImage(img2, (width - drawW) + parseFloat(x2.value), parseFloat(y2.value), drawW, drawH);
+            } else {
+                ctx.fillStyle = '#00224a'; ctx.fillRect(0, 0, width, height);
+                ctx.fillStyle = '#ffffff'; ctx.font = '30px "Black Han Sans", sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('이미지를 업로드하세요', width - (width - splitBottomX) / 2, height / 2);
+            }
+            ctx.restore();
 
-        ctx.strokeStyle = state.strokeColor;
-        ctx.lineWidth = state.strokeWidth;
-        ctx.strokeText(line, tx, ty);
+            // 분할선
+            ctx.beginPath();
+            ctx.moveTo(splitTopX, 0); ctx.lineTo(splitBottomX, height);
+            ctx.lineWidth = 15; ctx.strokeStyle = '#ffffff'; ctx.stroke();
 
-        ctx.fillStyle = accent ? state.accentColor : state.fillColor;
-        ctx.fillText(line, tx, ty);
-      });
+            // 텍스트 그리기 함수 (크기 파라미터 추가)
+            const drawText = (text, x, y, size, angle, fillColor, strokeColor) => {
+                ctx.save();
+                ctx.translate(x, y); ctx.rotate((angle * Math.PI) / 180);
+                ctx.font = `${size}px "Black Han Sans", sans-serif`;
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                
+                ctx.lineWidth = 8; ctx.strokeStyle = strokeColor; ctx.lineJoin = 'round';
+                ctx.strokeText(text, 0, 0);
+                
+                ctx.fillStyle = fillColor; ctx.fillText(text, 0, 0);
+                ctx.restore();
+            };
 
-      ctx.restore();
-    }
+            // 변경된 설정값 적용
+            if (text1.value) {
+                drawText(
+                    text1.value, 
+                    parseFloat(textX1.value), 
+                    parseFloat(textY1.value), 
+                    parseFloat(textSize1.value), 
+                    -8, 
+                    textColor1.value, 
+                    '#1a1a1a'
+                );
+            }
+            
+            if (text2.value) {
+                drawText(
+                    text2.value, 
+                    parseFloat(textX2.value), 
+                    parseFloat(textY2.value), 
+                    parseFloat(textSize2.value), 
+                    -5, 
+                    textColor2.value, 
+                    '#1a1a1a'
+                );
+            }
+        }
 
-    function draw() {
-      ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
-
-      if (img) {
-        drawCoverImage(img);
-      } else {
-        const g = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H);
-        g.addColorStop(0, '#111827');
-        g.addColorStop(1, '#3f3f46');
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-
-        ctx.fillStyle = 'rgba(255,255,255,0.7)';
-        ctx.font = '700 42px sans-serif';
-        ctx.fillText('이미지를 넣으면 여기에 표시됨', 60, 330);
-      }
-
-      drawVignette();
-      drawText();
-    }
-
-    draw();
-  </script>
+        // 다운로드 로직
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            const link = document.createElement('a');
+            link.download = 'youtube_thumbnail.jpg';
+            link.href = dataUrl;
+            link.click();
+        });
+    </script>
 </body>
 </html>
